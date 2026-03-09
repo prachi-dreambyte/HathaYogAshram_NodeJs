@@ -54,6 +54,10 @@ app.use("/api/about-founder", require('./routes/AboutFounderRouter'));
 app.use("/api/about-foun", require('./routes/AboutFounderRouter'));
 app.use("/api/books", require("./routes/books"));
 app.use("/api/books-page", require("./routes/booksPage"));
+app.use("/api/courses", require("./routes/courseRoutes"));
+app.use("/api/course-batches", require("./routes/courseBatchRoutes"));
+app.use("/api/course-bookings", require("./routes/courseBookingRoutes"));
+app.use("/api/yoga-courses", require("./routes/courseRoutes"));
 app.use(errorHandler);
 const PORT = process.env.PORT || 8000;
 
