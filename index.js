@@ -46,12 +46,18 @@ app.get("/", (req, res) => {
   res.send("TeacherHeading API Running...");
 });
 app.use("/api/testimonial-heading", require("./routes/HomeTestinomialHeading"));
+app.use("/api/student-review", require("./routes/StudentReview"));
 
 
 // ******************************************/////////////**************************** */
 app.use("/api/about-founder-details", require('./routes/AboutFounderDetailsRoute'));
 app.use("/api/about-founder", require('./routes/AboutFounderRouter'));
 app.use("/api/about-foun", require('./routes/AboutFounderRouter'));
+app.use("/api/gallery", require('./routes/GalleryHeading'));
+app.use("/api/gallery-heading" , require('./routes/GalleryRoute'));
+app.use("/api/accommodation", require('./routes/Accommodation'));
+
+
 app.use(errorHandler);
 const PORT = process.env.PORT || 8000;
 
