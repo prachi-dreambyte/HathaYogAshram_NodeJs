@@ -52,6 +52,8 @@ app.use("/api/testimonial-heading", require("./routes/HomeTestinomialHeading"));
 app.use("/api/about-founder-details", require('./routes/AboutFounderDetailsRoute'));
 app.use("/api/about-founder", require('./routes/AboutFounderRouter'));
 app.use("/api/about-foun", require('./routes/AboutFounderRouter'));
+app.use("/api/books", require("./routes/books"));
+app.use("/api/books-page", require("./routes/booksPage"));
 app.use(errorHandler);
 const PORT = process.env.PORT || 8000;
 
