@@ -5,6 +5,9 @@ const AboutFounderSection = require("../models/AboutUs/AboutFounderSection.Model
 const Course = require("../models/courses/CourseModel");
 const CourseBatch = require("../models/courses/CourseBatchModel");
 const CourseBooking = require("../models/courses/CourseBookingModel");
+const Blog = require("../models/blog/BlogModel");
+const BlogPage = require("../models/blog/BlogPageModel");
+const OurSchool = require("../models/ourSchool/OurSchoolModel");
 
 dotenv.config();
 
@@ -814,6 +817,365 @@ const courseSeedData = [
   },
 ];
 
+const blogPageSeed = {
+  topLabel: "Wisdom, Insights & Inspiration",
+  title: "Yoga Blog - Rishikesh Yogkulam®",
+  breadcrumbLabel: "Blog",
+  sectionTitle: "Latest Articles & Yoga Insights",
+  description:
+    "Explore our collection of articles covering yoga philosophy, teacher training tips, pranayama techniques, and transformative experiences from our yoga community in Rishikesh.",
+};
+
+const blogSeedData = [
+  {
+    title: "Sheetkari Pranayama: Benefits and Techniques for Daily Yoga",
+    slug: "sheetkari-pranayama",
+    category: "Yoga Philosophy",
+    badge: "Pranayama Guide",
+    subtitle: "Benefits and Techniques for Daily Yoga",
+    excerpt:
+      "Sheetkari Pranayama helps bring a wave of calm and coolness into daily yoga practice. Learn the steps, benefits, and best times to practice.",
+    coverImage:
+      "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=1600&fit=crop",
+    readTime: "5 min read",
+    publishedAt: new Date("2026-01-15"),
+    contentHtml: `
+      <p><strong>Sheetkari Pranayama</strong>, also known as the Hissing Breath, is a cooling breathing technique that calms the nervous system and lowers body heat. It is a gentle yet powerful practice for daily balance.</p>
+
+      <h2>What is Sheetkari Pranayama?</h2>
+      <p>The word "Sheetkari" comes from Sanskrit, meaning "cooling" or "soothing." This pranayama creates a soft hissing sound during inhalation and encourages deep, steady exhalation through the nose.</p>
+
+      <h2>How to Practice</h2>
+      <ol>
+        <li>Sit comfortably with a tall spine and relaxed shoulders.</li>
+        <li>Close the lips and part the teeth slightly.</li>
+        <li>Inhale slowly through the teeth, creating a soft hiss.</li>
+        <li>Close the mouth and exhale through the nose.</li>
+        <li>Repeat for 5–10 rounds and notice the calming effect.</li>
+      </ol>
+
+      <h2>Key Benefits</h2>
+      <ul>
+        <li>Cools the body and mind during heat or stress.</li>
+        <li>Reduces anxiety and supports emotional balance.</li>
+        <li>Improves focus for meditation and study.</li>
+        <li>Supports digestion and soothes acidity.</li>
+        <li>Balances fiery energy (pitta) in Ayurveda.</li>
+      </ul>
+
+      <h2>Best Time to Practice</h2>
+      <p>Practice Sheetkari in the early morning, after an active practice, or whenever the body feels overheated. Avoid in cold weather or with low blood pressure.</p>
+
+      <h2>Final Thoughts</h2>
+      <p>Sheetkari is a beautiful tool for modern yogis—simple, accessible, and deeply soothing. Add it to your daily routine for a calmer mind and cooler body.</p>
+    `,
+  },
+  {
+    title: "5 Ways to Prepare for Yoga Teacher Training in Rishikesh, India",
+    slug: "prepare-ytt-rishikesh",
+    category: "Yoga Training",
+    badge: "Teacher Training",
+    subtitle: "Essential preparation tips before arriving in Rishikesh",
+    excerpt:
+      "Feeling the call to deepen your practice? Here are five essential ways to prepare for your yoga teacher training in Rishikesh.",
+    coverImage:
+      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1600&fit=crop",
+    readTime: "7 min read",
+    publishedAt: new Date("2026-01-12"),
+    contentHtml: `
+      <p>Preparing for a yoga teacher training is as important as the training itself. These five steps will help you arrive grounded, focused, and ready to learn.</p>
+      <h2>1. Build a Consistent Practice</h2>
+      <p>Establish a simple daily routine of asana, pranayama, and meditation to build stamina and focus.</p>
+      <h2>2. Learn the Basics of Yoga Philosophy</h2>
+      <p>Read the Yoga Sutras or Bhagavad Gita to familiarize yourself with yogic principles.</p>
+      <h2>3. Prepare Your Body and Mind</h2>
+      <p>Prioritize sleep, hydration, and a sattvic diet to support the transition into intensive study.</p>
+      <h2>4. Pack with Intention</h2>
+      <p>Bring comfortable clothing, a reusable water bottle, and personal wellness essentials.</p>
+      <h2>5. Set a Clear Intention</h2>
+      <p>Clarify why you want to train and what you hope to learn. This will guide your journey.</p>
+    `,
+  },
+  {
+    title:
+      "500-Hour Yoga Teacher Training in Rishikesh: Key Benefits for Advanced Practitioners",
+    slug: "500-hour-ytt",
+    category: "Yoga Training",
+    badge: "Advanced Training",
+    subtitle: "Deepen your practice with a complete 500-hour training",
+    excerpt:
+      "Discover how a 500-hour yoga teacher training can elevate your teaching skills and deepen your spiritual practice.",
+    coverImage:
+      "https://images.unsplash.com/photo-1545389336-cf090694435e?w=1600&fit=crop",
+    readTime: "6 min read",
+    publishedAt: new Date("2026-01-10"),
+    contentHtml: `
+      <p>The 500-hour training is a full-spectrum immersion for dedicated practitioners. It combines 200 and 300-hour programs to build mastery.</p>
+      <h2>Why 500 Hours?</h2>
+      <ul>
+        <li>Advanced sequencing, adjustments, and cueing.</li>
+        <li>Deeper study of philosophy, anatomy, and subtle body.</li>
+        <li>Confidence to teach internationally with clarity.</li>
+      </ul>
+      <h2>Who Should Join</h2>
+      <p>If you already teach or want to refine your skills, the 500-hour path provides structure, mentorship, and a powerful community.</p>
+    `,
+  },
+];
+
+const ourSchoolSeedData = {
+  hero: {
+    title: "About Our Schools",
+    subtitle: "Yoga Alliance Certified Teacher Training Schools in Rishikesh, India",
+    omText: "ॐ",
+  },
+  sectionNav: [
+    { id: "about", label: "About School", iconKey: "School" },
+    { id: "vision", label: "Vision & Mission", iconKey: "Target" },
+    { id: "teaching", label: "Teaching", iconKey: "BookOpen" },
+    { id: "values", label: "Values", iconKey: "Star" },
+    { id: "edge", label: "Our Edge", iconKey: "Zap" },
+  ],
+  schools: [
+    {
+      id: "worldpeace",
+      name: "World Peace Yoga School",
+      iconKey: "Heart",
+      sections: {
+        about: {
+          title: "About World Peace Yoga School",
+          image:
+            "https://images.unsplash.com/photo-1588286840104-8957b019727f?w=1200&h=400&fit=crop",
+          imageAlt: "Yoga School in Rishikesh",
+          contentHtml: `
+            <p>World Peace Yoga School offers Yoga Alliance certified training in the spiritual heart of Rishikesh. We teach 200, 300, and 500-hour programs in Hatha, Ashtanga, and Vinyasa yoga.</p>
+            <p>Our approach focuses on intimate class sizes, authentic Himalayan lineage, and a warm, supportive community.</p>
+            <h3>What Makes Us Different</h3>
+            <ul>
+              <li>Small, personalized classes</li>
+              <li>Traditional teachings in a modern setting</li>
+              <li>Global community of dedicated yogis</li>
+            </ul>
+          `,
+        },
+        vision: {
+          title: "Our Mission & Services",
+          image: "",
+          imageAlt: "",
+          contentHtml: `
+            <p>Our mission is to deliver authentic yoga education while serving humanity through mindful, compassionate teaching.</p>
+            <h3>Our Goal</h3>
+            <p>We cultivate a safe and effective practice that supports both physical and spiritual growth.</p>
+          `,
+        },
+        teaching: {
+          title: "Our Teaching Approach",
+          image: "",
+          imageAlt: "",
+          contentHtml: `
+            <p>We guide students through a holistic study of asana, pranayama, meditation, and philosophy, emphasizing self-discovery and integrity.</p>
+            <h3>Course Offerings</h3>
+            <ul>
+              <li>200-Hour Beginner Level (RYT 200)</li>
+              <li>300-Hour Intermediate Level (RYT 300)</li>
+              <li>500-Hour Master Level (RYT 500)</li>
+              <li>Specialized Programs (Kids, Prenatal, Yin)</li>
+            </ul>
+          `,
+        },
+        values: {
+          title: "Our Values & Philosophy",
+          image: "",
+          imageAlt: "",
+          contentHtml: `
+            <p>We uphold unity, compassion, and authenticity as the foundation of every program.</p>
+            <ul>
+              <li>Traditional wisdom with modern clarity</li>
+              <li>Community and connection</li>
+              <li>Service to humanity</li>
+            </ul>
+          `,
+        },
+        edge: {
+          title: "Our Competitive Edge",
+          image: "",
+          imageAlt: "",
+          contentHtml: `
+            <p>World Peace Yoga School stands out through experienced teachers, authentic lineage, and a nurturing environment that supports long-term growth.</p>
+            <ul>
+              <li>Authentic Himalayan lineage</li>
+              <li>Personal attention and mentorship</li>
+              <li>International recognition</li>
+            </ul>
+          `,
+        },
+      },
+    },
+    {
+      id: "vinyasa",
+      name: "Vinyasa Yogashram",
+      iconKey: "School",
+      sections: {
+        about: {
+          title: "About Vinyasa Yogashram",
+          image:
+            "https://images.unsplash.com/photo-1545389336-cf090694435e?w=1200&h=400&fit=crop",
+          imageAlt: "Vinyasa Yoga Practice",
+          contentHtml: `
+            <p>Founded in 2015, Vinyasa Yogashram is rooted in the vibrant spirit of Rishikesh and offers dynamic, heart-centered training.</p>
+            <p>We operate campuses in Rishikesh, Goa, and Nepal, providing immersive learning in breathtaking locations.</p>
+            <h3>Yoga Alliance Certification</h3>
+            <p>Our programs are fully registered and internationally recognized.</p>
+          `,
+        },
+        vision: {
+          title: "Vision & Mission",
+          image: "",
+          imageAlt: "",
+          contentHtml: `
+            <p>We aim to inspire confident teachers with a strong foundation in anatomy, philosophy, and teaching methodology.</p>
+          `,
+        },
+        teaching: {
+          title: "Teaching Philosophy",
+          image: "",
+          imageAlt: "",
+          contentHtml: `
+            <p>Our teachers blend classical practice with modern alignment and sequencing.</p>
+            <ul>
+              <li>Hatha & Vinyasa sequencing</li>
+              <li>Pranayama and meditation</li>
+              <li>Teaching practice and feedback</li>
+            </ul>
+          `,
+        },
+        values: {
+          title: "Values",
+          image: "",
+          imageAlt: "",
+          contentHtml: `
+            <p>We honor discipline, curiosity, and compassionate leadership.</p>
+          `,
+        },
+        edge: {
+          title: "Our Edge",
+          image: "",
+          imageAlt: "",
+          contentHtml: `
+            <p>Students value our supportive mentorship, experiential teaching style, and global community.</p>
+          `,
+        },
+      },
+    },
+    {
+      id: "sattva",
+      name: "Sattva Yoga Academy",
+      iconKey: "Mountain",
+      sections: {
+        about: {
+          title: "About Sattva Yoga Academy",
+          image:
+            "https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=1200&h=400&fit=crop",
+          imageAlt: "Sattva Yoga Academy",
+          contentHtml: `
+            <p>Sattva Yoga Academy offers a holistic approach blending kriya, mantra, meditation, and asana practice.</p>
+            <p>Rooted in Himalayan tradition, Sattva supports inner transformation and conscious living.</p>
+          `,
+        },
+        vision: {
+          title: "Vision & Mission",
+          image: "",
+          imageAlt: "",
+          contentHtml: `
+            <p>We cultivate wholeness, truth, and compassion through a complete yogic lifestyle.</p>
+          `,
+        },
+        teaching: {
+          title: "Teaching Style",
+          image: "",
+          imageAlt: "",
+          contentHtml: `
+            <p>Our trainings weave together breathwork, kriya, mindfulness, and devotion.</p>
+          `,
+        },
+        values: {
+          title: "Core Values",
+          image: "",
+          imageAlt: "",
+          contentHtml: `
+            <ul>
+              <li>Integrity and self-inquiry</li>
+              <li>Embodied spirituality</li>
+              <li>Service and conscious action</li>
+            </ul>
+          `,
+        },
+        edge: {
+          title: "Our Edge",
+          image: "",
+          imageAlt: "",
+          contentHtml: `
+            <p>Sattva offers a rare integration of yogic technology for modern living.</p>
+          `,
+        },
+      },
+    },
+    {
+      id: "yogkulam",
+      name: "Rishikesh Yogkulam",
+      iconKey: "Sparkles",
+      sections: {
+        about: {
+          title: "About Rishikesh Yogkulam",
+          image:
+            "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=1200&h=400&fit=crop",
+          imageAlt: "Rishikesh Yogkulam",
+          contentHtml: `
+            <p>Rishikesh Yogkulam is a traditional school dedicated to classical yoga education with heartfelt guidance.</p>
+            <p>We welcome practitioners from around the world to study in the birthplace of yoga.</p>
+          `,
+        },
+        vision: {
+          title: "Vision & Mission",
+          image: "",
+          imageAlt: "",
+          contentHtml: `
+            <p>Our vision is to spread authentic yogic wisdom through disciplined study and compassionate living.</p>
+          `,
+        },
+        teaching: {
+          title: "Teaching Approach",
+          image: "",
+          imageAlt: "",
+          contentHtml: `
+            <p>We combine systematic training with personal mentorship for long-term growth.</p>
+          `,
+        },
+        values: {
+          title: "Values",
+          image: "",
+          imageAlt: "",
+          contentHtml: `
+            <ul>
+              <li>Humility and respect</li>
+              <li>Consistency and discipline</li>
+              <li>Community and service</li>
+            </ul>
+          `,
+        },
+        edge: {
+          title: "Our Edge",
+          image: "",
+          imageAlt: "",
+          contentHtml: `
+            <p>Our alumni network and lineage support continuous learning and connection.</p>
+          `,
+        },
+      },
+    },
+  ],
+};
+
 const makeDate = (value) => new Date(value);
 
 const buildBatches = (courseMap) => {
@@ -952,6 +1314,9 @@ const run = async () => {
   await CourseBooking.deleteMany();
   await CourseBatch.deleteMany();
   await Course.deleteMany();
+  await Blog.deleteMany();
+  await BlogPage.deleteMany();
+  await OurSchool.deleteMany();
 
   const createdCourses = await Course.insertMany(courseSeedData);
   const courseMap = createdCourses.reduce((acc, course) => {
@@ -964,7 +1329,11 @@ const run = async () => {
     await CourseBatch.insertMany(batches);
   }
 
-  console.log("Seeded About Founder data and Courses data.");
+  await BlogPage.create(blogPageSeed);
+  await Blog.insertMany(blogSeedData);
+  await OurSchool.create(ourSchoolSeedData);
+
+  console.log("Seeded About Founder data, Courses data, Blogs, and Our School data.");
   process.exit(0);
 };
 
