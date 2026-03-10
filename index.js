@@ -58,10 +58,13 @@ app.use("/api/books-page", require("./routes/booksPage"));
 app.use("/api/courses", require("./routes/courseRoutes"));
 app.use("/api/course-batches", require("./routes/courseBatchRoutes"));
 app.use("/api/course-bookings", require("./routes/courseBookingRoutes"));
+app.use("/api/vedic-mantra-form", require("./routes/VedicMantraForm"));
 app.use("/api/yoga-courses", require("./routes/courseRoutes"));
 app.use("/api/gallery", require('./routes/GalleryHeading'));
 app.use("/api/gallery-heading" , require('./routes/GalleryRoute'));
 app.use("/api/accommodation", require('./routes/Accommodation'));
+app.use("/api/hours24", require('./routes/Hours24'));
+app.use("/api/rules-refund", require('./routes/RulesRefundForm'));
 
 
 app.use(errorHandler);
@@ -70,3 +73,4 @@ const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
