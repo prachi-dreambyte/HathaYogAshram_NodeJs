@@ -60,19 +60,18 @@ app.use("/api/course-batches", require("./routes/courseBatchRoutes"));
 app.use("/api/course-bookings", require("./routes/courseBookingRoutes"));
 app.use("/api/vedic-mantra-form", require("./routes/VedicMantraForm"));
 app.use("/api/yoga-courses", require("./routes/courseRoutes"));
-<<<<<<< HEAD
 app.use("/api/gallery", require('./routes/GalleryHeading'));
 app.use("/api/gallery-heading" , require('./routes/GalleryRoute'));
 app.use("/api/accommodation", require('./routes/Accommodation'));
 app.use("/api/hours24", require('./routes/Hours24'));
 app.use("/api/rules-refund", require('./routes/RulesRefundForm'));
+app.use('/api/ayurveda-page', require('./routes/ayurveda'));
+app.use("/api/online-yoga", require('./routes/OnlineYoga'));
 
 
-=======
-app.use("/api/blogs", require("./routes/blogRoutes"));
+app.use("/api/blog-details", require("./routes/blogRoutes"));
 app.use("/api/blog-page", require("./routes/blogPageRoutes"));
 app.use("/api/our-school", require("./routes/ourSchoolRoutes"));
->>>>>>> 5fcdfd6 (Blog and school)
 app.use(errorHandler);
 const PORT = process.env.PORT || 8000;
 

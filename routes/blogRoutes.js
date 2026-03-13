@@ -1,12 +1,27 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const blogController = require("../controllers/blogController");
+const upload = require('../config/multer'); // your existing multer file
+const {
+  getAll,
+  getOne,
+  create,
+  update,
+  delete: deleteItem,
+} = require('../controllers/blogController');
 
-router.get("/", blogController.getAll);
-router.get("/slug/:slug", blogController.getBySlug);
-router.get("/:id", blogController.getById);
-router.post("/", blogController.uploadCover, blogController.create);
-router.put("/:id", blogController.uploadCover, blogController.update);
-router.delete("/:id", blogController.remove);
+// Multer fields for two file inputs
+const uploadFields = upload.fields([
+  { name: 'heroImage', maxCount: 1 },
+  { name: 'BlogMainImage', maxCount: 1 },
+]);
+
+router.route('/')
+  .get(getAll)
+  .post(uploadFields, create);
+
+router.route('/:id')
+  .get(getOne)
+  .put(uploadFields, update)
+  .delete(deleteItem);
 
 module.exports = router;

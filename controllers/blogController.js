@@ -1,134 +1,119 @@
-const Blog = require("../models/blog/BlogModel");
-const multer = require("multer");
-const path = require("path");
+const BlogDetails = require('../models/blog/BlogModel');
+const path = require('path');
+const fs = require('fs').promises;
 
-// ── Multer config (cover upload) ────────────────────────────────────────────
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "uploads/"),
-  filename: (req, file, cb) =>
-    cb(null, Date.now() + "-" + file.originalname.replace(/\s+/g, "_")),
-});
-
-const fileFilter = (req, file, cb) => {
-  const allowed = /jpeg|jpg|png|gif|webp|svg/;
-  const ext = path.extname(file.originalname).toLowerCase();
-  allowed.test(ext) ? cb(null, true) : cb(new Error("Images only!"), false);
-};
-
-const upload = multer({ storage, fileFilter });
-exports.uploadCover = upload.single("cover");
-
-const imageUrl = (req, filename) =>
-  `${req.protocol}://${req.get("host")}/uploads/${filename}`;
-
-const slugify = (value) =>
-  String(value || "")
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/\s+/g, "-");
-
-const parseBoolean = (value) => {
-  if (value === undefined) return undefined;
-  if (typeof value === "boolean") return value;
-  return String(value).toLowerCase() === "true";
-};
-
-const buildBody = (req) => {
-  const body = {};
-
-  if (req.body.title !== undefined) body.title = req.body.title;
-  if (req.body.slug !== undefined) body.slug = req.body.slug;
-  if (req.body.category !== undefined) body.category = req.body.category;
-  if (req.body.badge !== undefined) body.badge = req.body.badge;
-  if (req.body.subtitle !== undefined) body.subtitle = req.body.subtitle;
-  if (req.body.excerpt !== undefined) body.excerpt = req.body.excerpt;
-  if (req.body.coverImage !== undefined) body.coverImage = req.body.coverImage;
-  if (req.body.readTime !== undefined) body.readTime = req.body.readTime;
-  if (req.body.contentHtml !== undefined) body.contentHtml = req.body.contentHtml;
-  if (req.body.publishedAt !== undefined) {
-    const date = req.body.publishedAt ? new Date(req.body.publishedAt) : null;
-    if (date && !Number.isNaN(date.getTime())) body.publishedAt = date;
+// Helper to delete an image file (if it exists)
+const deleteImage = async (filename) => {
+  if (!filename) return;
+  const filePath = path.join(__dirname, '../uploads', filename);
+  try {
+    await fs.unlink(filePath);
+  } catch (err) {
+    // Ignore if file not found, but log other errors
+    if (err.code !== 'ENOENT') {
+      console.error('Failed to delete image:', err);
+    }
   }
-
-  const published = parseBoolean(req.body.isPublished);
-  if (published !== undefined) body.isPublished = published;
-
-  if (req.file) body.coverImage = imageUrl(req, req.file.filename);
-
-  if (!body.slug && body.title) body.slug = slugify(body.title);
-
-  return body;
 };
 
-// ── CRUD ───────────────────────────────────────────────────────────────────
+// @desc    Get all blog details
+// @route   GET /api/blog-details
 exports.getAll = async (req, res) => {
   try {
-    const includeUnpublished =
-      String(req.query.includeUnpublished || "").toLowerCase() === "true";
-
-    const query = includeUnpublished ? {} : { isPublished: true };
-    const data = await Blog.find(query).sort({
-      publishedAt: -1,
-      createdAt: -1,
-    });
+    const data = await BlogDetails.find().sort({ createdAt: -1 });
     res.json({ success: true, data });
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 };
 
-exports.getBySlug = async (req, res) => {
+// @desc    Get single blog details by id
+// @route   GET /api/blog-details/:id
+exports.getOne = async (req, res) => {
   try {
-    const item = await Blog.findOne({ slug: req.params.slug });
-    if (!item) return res.status(404).json({ success: false, message: "Not found" });
+    const item = await BlogDetails.findById(req.params.id);
+    if (!item) return res.status(404).json({ success: false, error: 'Not found' });
     res.json({ success: true, data: item });
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 };
 
-exports.getById = async (req, res) => {
-  try {
-    const item = await Blog.findById(req.params.id);
-    if (!item) return res.status(404).json({ success: false, message: "Not found" });
-    res.json({ success: true, data: item });
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
-  }
-};
-
+// @desc    Create new blog details
+// @route   POST /api/blog-details
 exports.create = async (req, res) => {
   try {
-    const body = buildBody(req);
-    if (!body.publishedAt) body.publishedAt = new Date();
-    const created = await Blog.create(body);
-    res.status(201).json({ success: true, data: created });
-  } catch (err) {
-    res.status(400).json({ success: false, message: err.message });
+    const bodyData = { ...req.body };
+    if (req.files) {
+      if (req.files.heroImage) bodyData.heroImage = req.files.heroImage[0].filename;
+      if (req.files.BlogMainImage) bodyData.BlogMainImage = req.files.BlogMainImage[0].filename;
+    }
+
+    const newItem = new BlogDetails(bodyData);
+    await newItem.save();
+    res.status(201).json({ success: true, data: newItem });
+  } catch (error) {
+    // Clean up uploaded files on error
+    if (req.files) {
+      if (req.files.heroImage) await deleteImage(req.files.heroImage[0].filename);
+      if (req.files.BlogMainImage) await deleteImage(req.files.BlogMainImage[0].filename);
+    }
+    res.status(500).json({ success: false, error: error.message });
   }
 };
 
+// @desc    Update blog details
+// @route   PUT /api/blog-details/:id
 exports.update = async (req, res) => {
   try {
-    const body = buildBody(req);
-    const updated = await Blog.findByIdAndUpdate(req.params.id, body, {
-      new: true,
-    });
-    if (!updated) return res.status(404).json({ success: false, message: "Not found" });
+    const existing = await BlogDetails.findById(req.params.id);
+    if (!existing) return res.status(404).json({ success: false, error: 'Not found' });
+
+    const updateData = { ...req.body };
+
+    // Handle file updates
+    if (req.files) {
+      if (req.files.heroImage) {
+        await deleteImage(existing.heroImage);
+        updateData.heroImage = req.files.heroImage[0].filename;
+      }
+      if (req.files.BlogMainImage) {
+        await deleteImage(existing.BlogMainImage);
+        updateData.BlogMainImage = req.files.BlogMainImage[0].filename;
+      }
+    }
+
+    const updated = await BlogDetails.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true, runValidators: true }
+    );
+
     res.json({ success: true, data: updated });
-  } catch (err) {
-    res.status(400).json({ success: false, message: err.message });
+  } catch (error) {
+    // Clean up newly uploaded files on error
+    if (req.files) {
+      if (req.files.heroImage) await deleteImage(req.files.heroImage[0].filename);
+      if (req.files.BlogMainImage) await deleteImage(req.files.BlogMainImage[0].filename);
+    }
+    res.status(500).json({ success: false, error: error.message });
   }
 };
 
-exports.remove = async (req, res) => {
+// @desc    Delete blog details
+// @route   DELETE /api/blog-details/:id
+exports.delete = async (req, res) => {
   try {
-    const item = await Blog.findById(req.params.id);
-    if (!item) return res.status(404).json({ success: false, message: "Not found" });
+    const item = await BlogDetails.findById(req.params.id);
+    if (!item) return res.status(404).json({ success: false, error: 'Not found' });
+
+    // Delete associated images
+    await deleteImage(item.heroImage);
+    await deleteImage(item.BlogMainImage);
+
     await item.deleteOne();
-    res.json({ success: true, message: "Deleted successfully" });
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.json({ success: true, message: 'Deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 };
