@@ -8,10 +8,18 @@ const CourseBooking = require("../models/courses/CourseBookingModel");
 const Blog = require("../models/blog/BlogModel");
 const BlogPage = require("../models/blog/BlogPageModel");
 const Header = require("../models/header");
+const User = require("../models/UserModel");
 const HomeAyurvedaSection = require("../models/homepage/HomeAyurvedaSectionModel");
 const HomeRetreatSection = require("../models/homepage/HomeRetreatSectionModel");
 const HomeVideoSectionTwo = require("../models/homepage/HomeVideoSectionTwoModel");
 const OurSchool = require("../models/ourSchool/OurSchoolModel");
+const { hashPassword } = require("../utils/password");
+const {
+  DEFAULT_ADMIN_EMAIL,
+  DEFAULT_ADMIN_NAME,
+  DEFAULT_ADMIN_PASSWORD,
+  DEFAULT_ADMIN_ROLE,
+} = require("../config/defaultAdmin");
 
 dotenv.config();
 
@@ -1266,6 +1274,7 @@ const run = async () => {
   await Blog.deleteMany();
   await BlogPage.deleteMany();
   await Header.deleteMany();
+  await User.deleteMany();
   await HomeAyurvedaSection.deleteMany();
   await HomeRetreatSection.deleteMany();
   await HomeVideoSectionTwo.deleteMany();
@@ -1372,6 +1381,12 @@ const run = async () => {
       },
     ],
   });
+  await User.create({
+    name: DEFAULT_ADMIN_NAME,
+    email: DEFAULT_ADMIN_EMAIL,
+    passwordHash: hashPassword(DEFAULT_ADMIN_PASSWORD),
+    role: DEFAULT_ADMIN_ROLE,
+  });
   await HomeAyurvedaSection.create({
     title: "Discover Ayurveda Courses",
     subtitle: "Ayurveda Wellness & Healing Programs",
@@ -1395,7 +1410,7 @@ const run = async () => {
   await OurSchool.create(ourSchoolSeedData);
 
   console.log(
-    "✅ Seeded founders, courses, batches, blogs, header settings, ayurveda section, retreat section, video section two, and school data."
+    "✅ Seeded founders, courses, batches, blogs, header settings, admin user, ayurveda section, retreat section, video section two, and school data."
   );
   process.exit(0);
 };

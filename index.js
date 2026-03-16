@@ -3,9 +3,14 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const connectDB = require("./config/db");
 const errorHandler = require("./middleware/errorMiddleware");
+const ensureDefaultAdmin = require("./utils/ensureDefaultAdmin");
 
 dotenv.config();
-connectDB();
+connectDB().then(() => {
+  ensureDefaultAdmin().catch((error) => {
+    console.error("Failed to ensure default admin:", error.message);
+  });
+});
 
 const app = express();
 
@@ -17,6 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static("uploads"));
 
 // Routes
+app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/banners", require("./routes/newRouteBanner"));
 app.use("/api/section1", require("./routes/Section1Routes"));
 app.use("/api/home-teacher", require("./routes/teacherHeadingRoute"));
