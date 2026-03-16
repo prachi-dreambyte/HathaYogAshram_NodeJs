@@ -34,6 +34,7 @@ app.use("/api/teacher-training-cards", require("./routes/TeacherTrainingCardRout
 app.use("/api/home-facility-cards", require("./routes/HomeFacilityCardsRoute"));
 app.use("/api/homeyogaalliance", require("./routes/HomeYogaAllianceRoutes"));
 app.use("/api/header", require("./routes/headerRoutes"));
+app.use("/api/footer", require("./routes/footerRoutes"));
 app.use("/api/home-ayurveda-section", require("./routes/HomeAyurvedaSectionRoute"));
 app.use("/api/home-retreat-section", require("./routes/HomeRetreatSectionRoute"));
 app.use("/api/home-video-section-two", require("./routes/HomeVideoSectionTwoRoute"));
