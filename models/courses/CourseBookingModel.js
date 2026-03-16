@@ -10,8 +10,11 @@ const CourseBookingSchema = new mongoose.Schema(
     address: { type: String },
     country: { type: String },
     source: { type: String },
+    roomType: { type: String, default: "" },
+    price: { type: String, default: "" },
+    priceOld: { type: String, default: "" },
     seats: { type: Number, default: 1 },
-    status: { type: String, default: "confirmed" }, // confirmed | pending | cancelled
+    status: { type: String, default: "pending" }, // pending | confirmed | cancelled
   },
   { timestamps: true }
 );

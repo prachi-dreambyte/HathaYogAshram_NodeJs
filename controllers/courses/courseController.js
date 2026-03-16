@@ -1,6 +1,10 @@
 const Course = require("../../models/courses/CourseModel");
 const CourseBatch = require("../../models/courses/CourseBatchModel");
 const CourseBooking = require("../../models/courses/CourseBookingModel");
+const {
+  buildBatchView,
+  buildBookedMap,
+} = require("../../utils/courseAvailability");
 const multer = require("multer");
 const path = require("path");
 
@@ -180,54 +184,14 @@ const parseCourseBody = (req) => {
   return body;
 };
 
-// ── Batch helpers ─────────────────────────────────────────────────────────────
-const buildAvailabilityMap = async (batchIds) => {
-  if (!batchIds.length) return new Map();
-  const bookings = await CourseBooking.aggregate([
-    { $match: { batch: { $in: batchIds }, status: { $ne: "cancelled" } } },
-    { $group: { _id: "$batch", total: { $sum: "$seats" } } },
-  ]);
-  const map = new Map();
-  bookings.forEach((item) => map.set(String(item._id), item.total));
-  return map;
-};
-
-const buildBatchView = (batch, bookedSeats) => {
-  const availableSeats = Math.max((batch.capacity || 0) - bookedSeats, 0);
-  let statusLabel = batch.status;
-  let statusType = "primary";
-  if (!statusLabel) {
-    statusLabel = availableSeats <= 0 ? "Fully Booked" : `${availableSeats} Seats Left`;
-    statusType = availableSeats <= 0 ? "success" : "primary";
-  } else {
-    const l = statusLabel.toLowerCase();
-    if (l.includes("waiting")) statusType = "warning";
-    if (l.includes("fully")) statusType = "success";
-  }
-  return {
-    _id: batch._id,
-    course: batch.course,
-    startDate: batch.startDate,
-    endDate: batch.endDate,
-    capacity: batch.capacity,
-    priceShared: batch.priceShared,
-    priceSharedOld: batch.priceSharedOld,
-    pricePrivate: batch.pricePrivate,
-    pricePrivateOld: batch.pricePrivateOld,
-    statusLabel,
-    statusType,
-    availableSeats,
-  };
-};
-
 const attachBatches = async (course, { upcomingOnly = false } = {}) => {
   const batches = await CourseBatch.find({ course: course._id }).sort({ startDate: 1 });
   const batchIds = batches.map((b) => b._id);
-  const availabilityMap = await buildAvailabilityMap(batchIds);
+  const availabilityMap = await buildBookedMap(batchIds);
   const now = new Date();
   return batches
     .filter((b) => (upcomingOnly ? b.startDate >= now : true))
-    .map((b) => buildBatchView(b, availabilityMap.get(String(b._id)) || 0));
+    .map((b) => buildBatchView(b, availabilityMap.get(String(b._id))));
 };
 
 // ── CRUD ──────────────────────────────────────────────────────────────────────
