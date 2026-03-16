@@ -7,6 +7,10 @@ const TeacherTrainingCardsSchema = new mongoose.Schema({
     required: true
   },
 
+  slug: {
+    type: String
+  },
+
   icon: {
     type: String,
     required: true
@@ -24,7 +28,33 @@ const TeacherTrainingCardsSchema = new mongoose.Schema({
 
   image: {
     type: String
-  }
+  },
+
+  benefits: [
+    {
+      mainHeading: String,
+      icon: String,
+      cardHeading: String,
+      cardParagraph: String
+    }
+  ],
+
+  traditional: [
+    {
+      heading: String,
+      number: String,
+      title: String
+    }
+  ],
+
+  practice: [
+    {
+      heading: String,
+      cardicon: String,
+      cardHead: String,
+      cardPara: String
+    }
+  ]
 
 }, { timestamps: true });
 

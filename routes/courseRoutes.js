@@ -9,5 +9,6 @@ router.get("/:id", ctrl.getById);
 router.post("/", ctrl.uploadBanner, ctrl.create);
 router.put("/:id", ctrl.uploadBanner, ctrl.update);
 router.delete("/:id", ctrl.remove);
+router.get("/:id/related", ctrl.getRelated);
 
 module.exports = router;

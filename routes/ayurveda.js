@@ -1,30 +1,39 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const upload = require('../middleware/upload');
-const {
-  getAll,
-  getOne,
-  create,
-  update,
-  delete: deleteContent
-} = require('../controllers/courses/ayurveda');
+const multer = require("multer");
 
-// Configure multer for multiple fields
+const {
+  createAyurveda,
+  getAyurveda,
+  updateAyurveda,
+  deleteAyurveda
+} = require("../controllers/courses/ayurveda");
+
+
+// Multer setup
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/");
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname);
+  }
+});
+
+const upload = multer({ storage });
+
 const uploadFields = upload.fields([
-  { name: 'heroImage', maxCount: 1 },
-  { name: 'whatIsAyurvedaImage', maxCount: 1 },
-  { name: 'teacherTrainingImage', maxCount: 1 },
-  { name: 'FoodImage', maxCount: 1 },
-  { name: 'benefitsImage', maxCount: 1 }
+  { name: "heroImage" },
+  { name: "whatIsAyurvedaImage" },
+  { name: "teacherTrainingImage" },
+  { name: "FoodImage" },
+  { name: "benefitsImage" }
 ]);
 
-router.route('/')
-  .get(getAll)
-  .post(uploadFields, create);
 
-router.route('/:id')
-  .get(getOne)
-  .put(uploadFields, update)
-  .delete(deleteContent);
+router.post("/", uploadFields, createAyurveda);
+router.get("/", getAyurveda);
+router.put("/:id", uploadFields, updateAyurveda);
+router.delete("/:id", deleteAyurveda);
 
 module.exports = router;

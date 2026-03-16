@@ -1,146 +1,120 @@
-const AyurvedaContent = require('../../models/courses/ayurveda');
-const fs = require('fs');
-const path = require('path');
+const Ayurveda = require("../../models/courses/ayurveda");
 
-// Helper to delete old image files when updating
-const deleteImageFile = (filePath) => {
-  const fullPath = path.join(__dirname, '..', filePath);
-  if (fs.existsSync(fullPath)) {
-    fs.unlinkSync(fullPath);
-  }
-};
 
-// @desc    Get all Ayurveda content entries
-// @route   GET /api/ayurveda-page
-exports.getAll = async (req, res) => {
+// CREATE
+exports.createAyurveda = async (req, res) => {
   try {
-    const contents = await AyurvedaContent.find().sort({ createdAt: -1 });
-    res.json({ success: true, data: contents });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: 'Server Error' });
-  }
-};
 
-// @desc    Get single Ayurveda content by ID
-// @route   GET /api/ayurveda-page/:id
-exports.getOne = async (req, res) => {
-  try {
-    const content = await AyurvedaContent.findById(req.params.id);
-    if (!content) {
-      return res.status(404).json({ success: false, message: 'Content not found' });
-    }
-    res.json({ success: true, data: content });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: 'Server Error' });
-  }
-};
+    const data = req.body;
 
-// @desc    Create new Ayurveda content
-// @route   POST /api/ayurveda-page
-exports.create = async (req, res) => {
-  try {
-    // req.body contains all text fields
-    // req.files contains uploaded files (from multer)
-    const data = { ...req.body };
+    const newAyurveda = new Ayurveda({
+      ...data,
+      heroImage: req.files?.heroImage?.[0]?.filename,
+      whatIsAyurvedaImage: req.files?.whatIsAyurvedaImage?.[0]?.filename,
+      teacherTrainingImage: req.files?.teacherTrainingImage?.[0]?.filename,
+      FoodImage: req.files?.FoodImage?.[0]?.filename,
+      benefitsImage: req.files?.benefitsImage?.[0]?.filename,
 
-    // Handle file uploads: map field names to file paths
-    const fileFields = ['heroImage', 'whatIsAyurvedaImage', 'teacherTrainingImage', 'FoodImage', 'benefitsImage'];
-    fileFields.forEach(field => {
-      if (req.files && req.files[field]) {
-        data[field] = req.files[field][0].path; // multer stores file path
-      }
+      connectionItems: JSON.parse(data.connectionItems || "[]"),
+      benefitsItems: JSON.parse(data.benefitsItems || "[]"),
+      dinacharyaItems: JSON.parse(data.dinacharyaItems || "[]"),
+      therapyItems: JSON.parse(data.therapyItems || "[]")
     });
 
-    // Parse JSON arrays if they were sent as strings (if frontend stringifies)
-    ['connectionItems', 'benefitsItems', 'dinacharyaItems', 'therapyItems'].forEach(arrField => {
-      if (data[arrField] && typeof data[arrField] === 'string') {
-        try {
-          data[arrField] = JSON.parse(data[arrField]);
-        } catch (e) {
-          // ignore
-        }
-      }
+    await newAyurveda.save();
+
+    res.json({
+      success: true,
+      message: "Ayurveda created successfully",
+      data: newAyurveda
     });
 
-    const content = new AyurvedaContent(data);
-    await content.save();
-    res.status(201).json({ success: true, data: content });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: 'Server Error' });
+    res.status(500).json({ error: error.message });
   }
 };
 
-// @desc    Update Ayurveda content
-// @route   PUT /api/ayurveda-page/:id
-exports.update = async (req, res) => {
+
+// GET ALL
+exports.getAyurveda = async (req, res) => {
   try {
-    let content = await AyurvedaContent.findById(req.params.id);
-    if (!content) {
-      return res.status(404).json({ success: false, message: 'Content not found' });
+
+    const data = await Ayurveda.find().sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      data
+    });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
+// UPDATE
+exports.updateAyurveda = async (req, res) => {
+
+  try {
+
+    const id = req.params.id;
+    const data = req.body;
+
+    const updateData = {
+      ...data,
+      connectionItems: JSON.parse(data.connectionItems || "[]"),
+      benefitsItems: JSON.parse(data.benefitsItems || "[]"),
+      dinacharyaItems: JSON.parse(data.dinacharyaItems || "[]"),
+      therapyItems: JSON.parse(data.therapyItems || "[]")
+    };
+
+    if (req.files?.heroImage) {
+      updateData.heroImage = req.files.heroImage[0].filename;
     }
 
-    const data = { ...req.body };
+    if (req.files?.whatIsAyurvedaImage) {
+      updateData.whatIsAyurvedaImage = req.files.whatIsAyurvedaImage[0].filename;
+    }
 
-    // Handle file uploads: if new files are provided, delete old ones
-    const fileFields = ['heroImage', 'whatIsAyurvedaImage', 'teacherTrainingImage', 'FoodImage', 'benefitsImage'];
-    fileFields.forEach(field => {
-      if (req.files && req.files[field]) {
-        // Delete old image if exists
-        if (content[field]) {
-          deleteImageFile(content[field]);
-        }
-        data[field] = req.files[field][0].path;
-      }
+    if (req.files?.teacherTrainingImage) {
+      updateData.teacherTrainingImage = req.files.teacherTrainingImage[0].filename;
+    }
+
+    if (req.files?.FoodImage) {
+      updateData.FoodImage = req.files.FoodImage[0].filename;
+    }
+
+    if (req.files?.benefitsImage) {
+      updateData.benefitsImage = req.files.benefitsImage[0].filename;
+    }
+
+    const updated = await Ayurveda.findByIdAndUpdate(id, updateData, { new: true });
+
+    res.json({
+      success: true,
+      message: "Updated successfully",
+      data: updated
     });
 
-    // Parse JSON arrays if they were sent as strings
-    ['connectionItems', 'benefitsItems', 'dinacharyaItems', 'therapyItems'].forEach(arrField => {
-      if (data[arrField] && typeof data[arrField] === 'string') {
-        try {
-          data[arrField] = JSON.parse(data[arrField]);
-        } catch (e) {
-          // ignore
-        }
-      }
-    });
-
-    // Update the document
-    content = await AyurvedaContent.findByIdAndUpdate(req.params.id, data, {
-      new: true,
-      runValidators: true
-    });
-
-    res.json({ success: true, data: content });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: 'Server Error' });
+    res.status(500).json({ error: error.message });
   }
 };
 
-// @desc    Delete Ayurveda content
-// @route   DELETE /api/ayurveda-page/:id
-exports.delete = async (req, res) => {
-  try {
-    const content = await AyurvedaContent.findById(req.params.id);
-    if (!content) {
-      return res.status(404).json({ success: false, message: 'Content not found' });
-    }
 
-    // Delete associated images
-    const fileFields = ['heroImage', 'whatIsAyurvedaImage', 'teacherTrainingImage', 'FoodImage', 'benefitsImage'];
-    fileFields.forEach(field => {
-      if (content[field]) {
-        deleteImageFile(content[field]);
-      }
+// DELETE
+exports.deleteAyurveda = async (req, res) => {
+
+  try {
+
+    await Ayurveda.findByIdAndDelete(req.params.id);
+
+    res.json({
+      success: true,
+      message: "Deleted successfully"
     });
 
-    await content.remove();
-    res.json({ success: true, message: 'Content deleted' });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: 'Server Error' });
+    res.status(500).json({ error: error.message });
   }
 };

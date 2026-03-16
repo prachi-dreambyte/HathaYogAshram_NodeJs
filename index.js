@@ -33,6 +33,10 @@ app.use(
 app.use("/api/teacher-training-cards", require("./routes/TeacherTrainingCardRoutes"));
 app.use("/api/home-facility-cards", require("./routes/HomeFacilityCardsRoute"));
 app.use("/api/homeyogaalliance", require("./routes/HomeYogaAllianceRoutes"));
+app.use("/api/header", require("./routes/headerRoutes"));
+app.use("/api/home-ayurveda-section", require("./routes/HomeAyurvedaSectionRoute"));
+app.use("/api/home-retreat-section", require("./routes/HomeRetreatSectionRoute"));
+app.use("/api/home-video-section-two", require("./routes/HomeVideoSectionTwoRoute"));
 app.use("/api/homewhychoose", require("./routes/WhychooseHeadingRoute"));
 app.use("/api/homewhychoosecard", require("./routes/WhychoosecardsRoute"));
 app.use("/api/hometestinomalcard", require('./routes/HomeTestinomialCards'));
@@ -40,7 +44,7 @@ app.use("/api/hometestinomalcard", require('./routes/HomeTestinomialCards'));
 app.use("/api/home-video-section", require('./routes/HomepageVideoSection'));
 app.use("/api/faq-heading", require('./routes/HomeFaqHeadingRoute'));
 app.use("/api/faqs", require('./routes/HomeFaqQuestionRoute'));
-app.use("/api", require('./routes/HomeGivingBackRoute'));
+app.use("/api/giving-back", require('./routes/HomeGivingBackRoute'));
 app.use("/api/how-to-reach-heading", require('./routes/HowToReachUsRoutes'));
 app.get("/", (req, res) => {
   res.send("TeacherHeading API Running...");
@@ -58,7 +62,7 @@ app.use("/api/books-page", require("./routes/booksPage"));
 app.use("/api/courses", require("./routes/courseRoutes"));
 app.use("/api/course-batches", require("./routes/courseBatchRoutes"));
 app.use("/api/course-bookings", require("./routes/courseBookingRoutes"));
-app.use("/api/vedic-mantra-form", require("./routes/VedicMantraForm"));
+app.use("/api/vedic-mantra", require("./routes/VedicMantraPage"));
 app.use("/api/yoga-courses", require("./routes/courseRoutes"));
 app.use("/api/gallery", require('./routes/GalleryHeading'));
 app.use("/api/gallery-heading" , require('./routes/GalleryRoute'));
@@ -78,4 +82,3 @@ const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-

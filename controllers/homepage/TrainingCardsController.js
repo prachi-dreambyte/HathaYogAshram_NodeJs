@@ -1,5 +1,6 @@
 const TeacherTrainingCards = require("../../models/homepage/TeacherTrainingCardModel");
 
+
 // CREATE
 exports.createCard = async (req, res) => {
 
@@ -8,9 +9,15 @@ exports.createCard = async (req, res) => {
     const newCard = new TeacherTrainingCards({
 
       number: req.body.number,
+      slug: req.body.slug,
       icon: req.body.icon,
       heading: req.body.heading,
       paragraph: req.body.paragraph,
+
+      benefits: req.body.benefits ? JSON.parse(req.body.benefits) : [],
+      traditional: req.body.traditional ? JSON.parse(req.body.traditional) : [],
+      practice: req.body.practice ? JSON.parse(req.body.practice) : [],
+
       image: req.file ? req.file.filename : ""
 
     });
@@ -23,9 +30,13 @@ exports.createCard = async (req, res) => {
     });
 
   } catch (error) {
+
     res.status(500).json({ error: error.message });
+
   }
+
 };
+
 
 
 // GET ALL
@@ -41,9 +52,13 @@ exports.getCards = async (req, res) => {
     });
 
   } catch (error) {
+
     res.status(500).json({ error: error.message });
+
   }
+
 };
+
 
 
 // UPDATE
@@ -54,9 +69,14 @@ exports.updateCard = async (req, res) => {
     const updateData = {
 
       number: req.body.number,
+      slug: req.body.slug,
       icon: req.body.icon,
       heading: req.body.heading,
-      paragraph: req.body.paragraph
+      paragraph: req.body.paragraph,
+
+      benefits: req.body.benefits ? JSON.parse(req.body.benefits) : [],
+      traditional: req.body.traditional ? JSON.parse(req.body.traditional) : [],
+      practice: req.body.practice ? JSON.parse(req.body.practice) : []
 
     };
 
@@ -78,9 +98,13 @@ exports.updateCard = async (req, res) => {
     });
 
   } catch (error) {
+
     res.status(500).json({ error: error.message });
+
   }
+
 };
+
 
 
 // DELETE
@@ -96,6 +120,9 @@ exports.deleteCard = async (req, res) => {
     });
 
   } catch (error) {
+
     res.status(500).json({ error: error.message });
+
   }
+
 };
