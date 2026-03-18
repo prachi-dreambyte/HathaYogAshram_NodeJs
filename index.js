@@ -83,6 +83,8 @@ app.use('/api/online-yoga-ttc', require('./routes/yogaTTC'));
 app.use("/api/blog-details", require("./routes/blogRoutes"));
 app.use("/api/blog-page", require("./routes/blogPageRoutes"));
 app.use("/api/our-school", require("./routes/ourSchoolRoutes"));
+app.use("/api/contact-us", require("./routes/contactUsRoutes"));
+app.use("/api/contact-inquiries", require("./routes/contactInquiryRoutes"));
 app.use(errorHandler);
 const PORT = process.env.PORT || 8000;
 
