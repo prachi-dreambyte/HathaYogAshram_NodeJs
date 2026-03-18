@@ -12,7 +12,7 @@ const benefitSchema = new mongoose.Schema({
 });
 
 const onlineYogaSchema = new mongoose.Schema({
-
+  heroEyebrow: String,
   heroTitle: String,
   heroSubtitle: String,
   heroDescription: String,
@@ -27,7 +27,11 @@ const onlineYogaSchema = new mongoose.Schema({
   benefitsImage: String,
   benefitsHeading: String,
 
-  benefits: [benefitSchema]
+  benefits: [benefitSchema],
+
+  finalCtaTitle: String,
+  finalCtaButtonText: String,
+  finalCtaButtonLink: String
 
 },
 { timestamps: true });
