@@ -79,6 +79,7 @@ app.use("/api/rules-refund", require('./routes/RulesRefundForm'));
 app.use('/api/ayurveda-page', require('./routes/ayurveda'));
 app.use("/api/online-yoga", require('./routes/OnlineYoga'));
 app.use('/api/online-yoga-ttc', require('./routes/yogaTTC'));
+app.use("/api/yin-yoga", require("./routes/yinyogaRoute"));
 
 app.use("/api/blog-details", require("./routes/blogRoutes"));
 app.use("/api/blog-page", require("./routes/blogPageRoutes"));
