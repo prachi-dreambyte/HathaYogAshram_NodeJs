@@ -3,11 +3,16 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
+const videosUploadDir = path.resolve(__dirname, "../../uploads/videos");
+
+if (!fs.existsSync(videosUploadDir)) {
+  fs.mkdirSync(videosUploadDir, { recursive: true });
+}
 
 // ================= MULTER SETUP =================
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/videos/");
+    cb(null, videosUploadDir);
   },
   filename: (req, file, cb) => {
     cb(
@@ -92,8 +97,7 @@ exports.updateTeacherTraining = async (req, res) => {
 
     // delete old video
     if (req.file && training.video) {
-      const oldVideo =
-        `uploads/videos/${training.video}`;
+      const oldVideo = path.join(videosUploadDir, training.video);
 
       if (fs.existsSync(oldVideo)) {
         fs.unlinkSync(oldVideo);
@@ -146,8 +150,7 @@ exports.deleteTeacherTraining = async (req, res) => {
 
     // delete video file
     if (training.video) {
-      const filePath =
-        `uploads/videos/${training.video}`;
+      const filePath = path.join(videosUploadDir, training.video);
 
       if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);

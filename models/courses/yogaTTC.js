@@ -11,6 +11,8 @@ const CourseSchema = new mongoose.Schema({
   oldPrice: { type: String, default: '' },
   newPrice: { type: String, default: '' },
   isNew: { type: Boolean, default: true }
+}, {
+  suppressReservedKeysWarning: true
 });
 
 const TestimonialSchema = new mongoose.Schema({
