@@ -20,7 +20,17 @@ const fileFilter = (req, file, cb) => {
   allowed.test(ext) ? cb(null, true) : cb(new Error("Images only!"), false);
 };
 const upload = multer({ storage, fileFilter });
-exports.uploadBanner = upload.single("banner");
+exports.uploadCourseImages = upload.fields([
+  { name: "banner", maxCount: 1 },
+  { name: "cardImage", maxCount: 1 },
+  { name: "retreatImage", maxCount: 1 },
+  { name: "heroBannerImage", maxCount: 1 },
+  { name: "toBringImage", maxCount: 1 },
+  { name: "accommodationImage", maxCount: 1 },
+  { name: "foodImage", maxCount: 1 },
+  { name: "whyChooseImage", maxCount: 1 },
+  { name: "teacherImages", maxCount: 20 },
+]);
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 const imageUrl = (req, filename) =>
@@ -179,7 +189,60 @@ const parseCourseBody = (req) => {
     if (parsed) body.ourCoursesSection = parsed;
   }
 
-  if (req.file) body.banner = imageUrl(req, req.file.filename);
+  // Uploaded images (multipart/form-data)
+  if (req.files?.banner?.[0]) body.banner = imageUrl(req, req.files.banner[0].filename);
+
+  if (req.files?.cardImage?.[0]) {
+    body.card = body.card && typeof body.card === "object" ? body.card : {};
+    body.card.image = imageUrl(req, req.files.cardImage[0].filename);
+  }
+
+  if (req.files?.teacherImages?.length) {
+    body.teacherTraining =
+      body.teacherTraining && typeof body.teacherTraining === "object"
+        ? body.teacherTraining
+        : {};
+    body.teacherTraining.images = req.files.teacherImages.map((f) =>
+      imageUrl(req, f.filename)
+    );
+  }
+
+  if (req.files?.retreatImage?.[0]) {
+    body.retreat = body.retreat && typeof body.retreat === "object" ? body.retreat : {};
+    body.retreat.image = imageUrl(req, req.files.retreatImage[0].filename);
+  }
+
+  if (req.files?.accommodationImage?.[0]) {
+    body.accommodation =
+      body.accommodation && typeof body.accommodation === "object" ? body.accommodation : {};
+    body.accommodation.image = imageUrl(req, req.files.accommodationImage[0].filename);
+  }
+
+  if (req.files?.foodImage?.[0]) {
+    body.food = body.food && typeof body.food === "object" ? body.food : {};
+    body.food.image = imageUrl(req, req.files.foodImage[0].filename);
+  }
+
+  if (req.files?.whyChooseImage?.[0]) {
+    body.whyChoose =
+      body.whyChoose && typeof body.whyChoose === "object" ? body.whyChoose : {};
+    body.whyChoose.image = imageUrl(req, req.files.whyChooseImage[0].filename);
+  }
+
+  if (req.files?.heroBannerImage?.[0]) {
+    body.content = body.content && typeof body.content === "object" ? body.content : {};
+    body.content.hero = body.content.hero && typeof body.content.hero === "object" ? body.content.hero : {};
+    body.content.hero.bannerImage = imageUrl(req, req.files.heroBannerImage[0].filename);
+  }
+
+  if (req.files?.toBringImage?.[0]) {
+    body.content = body.content && typeof body.content === "object" ? body.content : {};
+    body.content.included =
+      body.content.included && typeof body.content.included === "object"
+        ? body.content.included
+        : {};
+    body.content.included.toBringImage = imageUrl(req, req.files.toBringImage[0].filename);
+  }
 
   return body;
 };
