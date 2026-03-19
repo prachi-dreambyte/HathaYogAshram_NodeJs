@@ -24,6 +24,14 @@ const populateBooking = (query) =>
 
 exports.create = async (req, res) => {
   try {
+    // Guard: reject empty/missing batch or course before Mongoose tries to cast
+    if (!req.body.batch || req.body.batch === "") {
+      return res.status(400).json({ success: false, message: "Batch is required" });
+    }
+    if (!req.body.course || req.body.course === "") {
+      return res.status(400).json({ success: false, message: "Course is required" });
+    }
+
     const batch = await CourseBatch.findById(req.body.batch);
     if (!batch) {
       return res.status(400).json({ success: false, message: "Invalid batch" });
