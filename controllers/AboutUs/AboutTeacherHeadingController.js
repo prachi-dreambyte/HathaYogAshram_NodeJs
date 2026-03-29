@@ -1,48 +1,91 @@
 const AboutTeacher = require("../../models/AboutUs/AboutTeacherHeadingModels");
 
+const getLatestRecord = () =>
+  AboutTeacher.findOne().sort({ updatedAt: -1, createdAt: -1 });
+
+const applyUploadedFiles = (body, files = {}) => {
+  if (files.bannerImage?.[0]) {
+    body.banner.bannerImage = files.bannerImage[0].filename;
+  }
+
+  (body.teacherSection?.teachers || []).forEach((teacher, index) => {
+    if (files[`teacherImage_${index}`]?.[0]) {
+      teacher.teacherImage = files[`teacherImage_${index}`][0].filename;
+    }
+  });
+
+  (body.videoSection?.videos || []).forEach((video, index) => {
+    if (files[`video_${index}`]?.[0]) {
+      video.video = files[`video_${index}`][0].filename;
+    }
+    if (files[`thumbnail_${index}`]?.[0]) {
+      video.thumbnail = files[`thumbnail_${index}`][0].filename;
+    }
+  });
+
+  return body;
+};
+
 exports.createAboutTeacher = async (req, res) => {
   try {
-    const body = JSON.parse(req.body.data);
+    const body = applyUploadedFiles(JSON.parse(req.body.data), req.files);
+    const existing = await getLatestRecord();
 
-    // Files mapping
-    const files = req.files;
-
-    // Banner Image
-    if (files.bannerImage) {
-      body.banner.bannerImage = files.bannerImage[0].filename;
+    let saved;
+    if (existing) {
+      existing.banner = body.banner;
+      existing.teacherSection = body.teacherSection;
+      existing.videoSection = body.videoSection;
+      saved = await existing.save();
+    } else {
+      saved = await AboutTeacher.create(body);
     }
 
-    // Teacher Images
-    body.teacherSection.teachers.forEach((teacher, index) => {
-      if (files[`teacherImage_${index}`]) {
-        teacher.teacherImage = files[`teacherImage_${index}`][0].filename;
-      }
+    res.status(201).json({
+      success: true,
+      message: "Saved Successfully",
+      data: saved,
     });
-
-    // Videos
-    body.videoSection.videos.forEach((video, index) => {
-      if (files[`video_${index}`]) {
-        video.video = files[`video_${index}`][0].filename;
-      }
-      if (files[`thumbnail_${index}`]) {
-        video.thumbnail = files[`thumbnail_${index}`][0].filename;
-      }
-    });
-
-    const newData = new AboutTeacher(body);
-    await newData.save();
-
-    res.status(201).json({ message: "Saved Successfully", data: newData });
 
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
 
 // GET
 exports.getAll = async (req, res) => {
-  const data = await AboutTeacher.find();
-  res.json(data);
+  try {
+    const data = await AboutTeacher.find().sort({ updatedAt: -1, createdAt: -1 });
+    res.json({ success: true, data });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.updateAboutTeacher = async (req, res) => {
+  try {
+    const existing = await AboutTeacher.findById(req.params.id);
+    if (!existing) {
+      return res.status(404).json({ success: false, message: "Record not found" });
+    }
+
+    const body = applyUploadedFiles(JSON.parse(req.body.data), req.files);
+    existing.banner = body.banner;
+    existing.teacherSection = body.teacherSection;
+    existing.videoSection = body.videoSection;
+
+    const saved = await existing.save();
+
+    res.json({
+      success: true,
+      message: "Updated Successfully",
+      data: saved,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: error.message });
+  }
 };

@@ -38,5 +38,6 @@ router.post(
 );
 
 router.get("/", controller.getAll);
+router.put("/:id", upload.fields(uploadFields), controller.updateAboutTeacher);
 
 module.exports = router;

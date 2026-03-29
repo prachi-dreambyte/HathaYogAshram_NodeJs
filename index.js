@@ -64,6 +64,7 @@ app.use("/api/student-review", require("./routes/StudentReview"));
 app.use("/api/about-founder-details", require('./routes/AboutFounderDetailsRoute'));
 app.use("/api/about-founder", require('./routes/AboutFounderRouter'));
 app.use("/api/about-foun", require('./routes/AboutFounderRouter'));
+app.use("/api/about-us", require("./routes/AboutUsPageRoute"));
 app.use("/api/about-teacher", require('./routes/AboutTeacherHeadingRoute'));
 app.use("/api/books", require("./routes/books"));
 app.use("/api/books-page", require("./routes/booksPage"));
