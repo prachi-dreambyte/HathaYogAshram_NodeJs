@@ -4,17 +4,16 @@ const whyChooseHeadingSchema = new mongoose.Schema(
   {
     mainHeading: {
       type: String,
-      required: true
+      required: [true, "Main heading is required"],
+      trim: true
     },
     subHeading: {
       type: String,
-      required: true
+      required: [true, "Sub heading is required"],
+      trim: true
     }
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model(
-  "WhyChooseHeading",
-  whyChooseHeadingSchema
-);
+module.exports = mongoose.model("WhyChooseHeading", whyChooseHeadingSchema);

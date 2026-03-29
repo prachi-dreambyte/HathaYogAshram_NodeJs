@@ -1,30 +1,42 @@
 const express = require("express");
-const router  = express.Router();
-const multer  = require("multer");
-const ctrl    = require("../controllers/AboutUs/AboutTeacherHeadingController");
+const router = express.Router();
+const controller = require("../controllers/AboutUs/AboutTeacherHeadingController");
+const multer = require("multer");
 
-// ── Multer config ─────────────────────────────────────────────────────────────
+// Storage
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "uploads/"),
-  filename:    (req, file, cb) =>
-    cb(null, Date.now() + "-" + file.originalname.replace(/\s+/g, "_")),
+  destination: (req, file, cb) => {
+    cb(null, "uploads/");
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
 });
 
 const upload = multer({ storage });
 
-// Accept up to 4 video file slots
-const uploadFields = upload.fields([
-  { name: "videoFile_0", maxCount: 1 },
-  { name: "videoFile_1", maxCount: 1 },
-  { name: "videoFile_2", maxCount: 1 },
-  { name: "videoFile_3", maxCount: 1 },
-]);
+// Dynamic Fields
+const uploadFields = [
+  { name: "bannerImage", maxCount: 1 },
+];
 
-// ── Routes ────────────────────────────────────────────────────────────────────
-router.get("/",       ctrl.getAll);
-router.get("/:id",    ctrl.getOne);
-router.post("/",      uploadFields, ctrl.create);
-router.put("/:id",    uploadFields, ctrl.update);
-router.delete("/:id", ctrl.remove);
+// Teacher images (max 10)
+for (let i = 0; i < 10; i++) {
+  uploadFields.push({ name: `teacherImage_${i}`, maxCount: 1 });
+}
+
+// Videos + thumbnails
+for (let i = 0; i < 10; i++) {
+  uploadFields.push({ name: `video_${i}`, maxCount: 1 });
+  uploadFields.push({ name: `thumbnail_${i}`, maxCount: 1 });
+}
+
+router.post(
+  "/create",
+  upload.fields(uploadFields),
+  controller.createAboutTeacher
+);
+
+router.get("/", controller.getAll);
 
 module.exports = router;

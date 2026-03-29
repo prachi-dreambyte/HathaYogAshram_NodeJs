@@ -1,23 +1,18 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-const faqHeadingSchema = new mongoose.Schema(
+const FaqItemSchema = new mongoose.Schema({
+  question: { type: String, required: true, trim: true },
+  answer:   { type: String, required: true, trim: true },
+});
+
+const FaqSectionSchema = new mongoose.Schema(
   {
-    mainHeading: {
-      type: String,
-      required: [true, "Main heading is required"],
-      trim: true,
-    },
-    subHeading: {
-      type: String,
-      required: [true, "Sub heading is required"],
-      trim: true,
-    },
-    image: {
-      type: String,
-      default: null,
-    },
+    heading:    { type: String, required: true, trim: true },
+    subheading: { type: String, trim: true, default: '' },
+    image:      { type: String, default: '' }, // stored filename, e.g. "image-1234.jpg"
+    faqs:       { type: [FaqItemSchema], default: [] },
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("FaqHeading", faqHeadingSchema);
+module.exports = mongoose.model('FaqSection', FaqSectionSchema);

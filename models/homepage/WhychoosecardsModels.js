@@ -12,6 +12,10 @@ const HomeWhyChooseCardSchema = new mongoose.Schema(
     required: true
   },
 
+  subheading: {
+    type: String
+  },
+
   paragraph: {
     type: String,
     required: true

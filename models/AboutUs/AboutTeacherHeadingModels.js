@@ -1,27 +1,39 @@
 const mongoose = require("mongoose");
 
+const TeacherSchema = new mongoose.Schema({
+  teacherName: String,
+  teacherImage: String,
+  role: String,
+  description: String,
+  certification: [String],
+  experience: [String],
+  expertise: [String],
+});
+
 const VideoSchema = new mongoose.Schema({
-  type: { type: String, enum: ["upload", "link"], default: "upload" },
-  url:  { type: String, default: "" },
-}, { _id: false });
+  video: String,
+  thumbnail: String,
+});
 
-const AboutTeacherHeadingSchema = new mongoose.Schema(
-  {
-    // Teacher Section
-    mainHeading:    { type: String, required: true },
-    subHeading:     { type: String },
-    paragraph:      { type: String },
-
-    // Video Section
-    videoHeading:    { type: String },
-    videoSubHeading: { type: String },
-    videos:          { type: [VideoSchema], default: [] },
-
-    // Last Section
-    lastHeading:   { type: String },
-    lastParagraph: { type: String },
+const AboutTeacherSchema = new mongoose.Schema({
+  banner: {
+    bannerImage: String,
+    mainSubHeading: String,
+    heading: String,
   },
-  { timestamps: true }
-);
 
-module.exports = mongoose.model("AboutTeacherHeading", AboutTeacherHeadingSchema);
+  teacherSection: {
+    teacherHeading: String,
+    teacherMainHeading: String,
+    teacherMainPara: String,
+    teachers: [TeacherSchema],
+  },
+
+  videoSection: {
+    videoHeading: String,
+    videoMainHeading: String,
+    videos: [VideoSchema],
+  },
+}, { timestamps: true });
+
+module.exports = mongoose.model("AboutTeacher", AboutTeacherSchema);

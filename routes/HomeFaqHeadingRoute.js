@@ -1,20 +1,27 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
+const upload = require('../middleware/upload');
 const {
-  uploadImage,
-  getAll,
-  getById,
-  create,
-  update,
-  remove,
-  removeImage,
-} = require("../controllers/homepage/FaqHeading");
+  getAllSections,
+  getSectionById,
+  createSection,
+  updateSection,
+  deleteSection,
+} = require('../controllers/homepage/FaqHeading');
 
-router.get("/",             getAll);
-router.get("/:id",          getById);
-router.post("/",            uploadImage, create);
-router.put("/:id",          uploadImage, update);
-router.delete("/:id",       remove);
-router.delete("/:id/image", removeImage);
+// GET    /api/faq
+router.get('/', getAllSections);
+
+// GET    /api/faq/:id
+router.get('/:id', getSectionById);
+
+// POST   /api/faq       (multipart/form-data with optional image field)
+router.post('/', upload.single('image'), createSection);
+
+// PUT    /api/faq/:id   (multipart/form-data with optional image field)
+router.put('/:id', upload.single('image'), updateSection);
+
+// DELETE /api/faq/:id
+router.delete('/:id', deleteSection);
 
 module.exports = router;

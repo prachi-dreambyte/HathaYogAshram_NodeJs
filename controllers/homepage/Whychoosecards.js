@@ -9,6 +9,7 @@ exports.createCard = async (req, res) => {
     const newCard = new HomeWhyChooseCard({
       icon: req.body.icon,
       heading: req.body.heading,
+      subheading: req.body.subheading,
       paragraph: req.body.paragraph,
       image: req.file ? req.file.path : ""
     });
@@ -79,6 +80,7 @@ exports.updateCard = async (req, res) => {
     const updateData = {
       icon: req.body.icon,
       heading: req.body.heading,
+      subheading: req.body.subheading,
       paragraph: req.body.paragraph
     };
 

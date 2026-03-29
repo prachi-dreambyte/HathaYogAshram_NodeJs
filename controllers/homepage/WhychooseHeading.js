@@ -3,15 +3,28 @@ const WhyChooseHeading = require("../../models/homepage/WhychooseHeadingModels")
 // Create
 exports.createHeading = async (req, res) => {
   try {
-    const data = new WhyChooseHeading(req.body);
+    console.log("req.body:", req.body); // Debug: check if body is received
+
+    const { mainHeading, subHeading } = req.body;
+
+    if (!mainHeading || !subHeading) {
+      return res.status(400).json({
+        success: false,
+        error: "mainHeading and subHeading are required"
+      });
+    }
+
+    const data = new WhyChooseHeading({ mainHeading, subHeading });
     const saved = await data.save();
 
     res.status(201).json({
       success: true,
       data: saved
     });
+
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("createHeading error:", error.message);
+    res.status(500).json({ success: false, error: error.message });
   }
 };
 
@@ -24,39 +37,64 @@ exports.getHeadings = async (req, res) => {
       success: true,
       data
     });
+
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("getHeadings error:", error.message);
+    res.status(500).json({ success: false, error: error.message });
   }
 };
 
 // Update
 exports.updateHeading = async (req, res) => {
   try {
+    console.log("Update req.body:", req.body); // Debug
+
+    const { mainHeading, subHeading } = req.body;
+
+    if (!mainHeading || !subHeading) {
+      return res.status(400).json({
+        success: false,
+        error: "mainHeading and subHeading are required"
+      });
+    }
+
     const updated = await WhyChooseHeading.findByIdAndUpdate(
       req.params.id,
-      req.body,
-      { new: true }
+      { mainHeading, subHeading },
+      { new: true, runValidators: true }
     );
+
+    if (!updated) {
+      return res.status(404).json({ success: false, error: "Record not found" });
+    }
 
     res.json({
       success: true,
       data: updated
     });
+
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("updateHeading error:", error.message);
+    res.status(500).json({ success: false, error: error.message });
   }
 };
 
 // Delete
 exports.deleteHeading = async (req, res) => {
   try {
-    await WhyChooseHeading.findByIdAndDelete(req.params.id);
+    const deleted = await WhyChooseHeading.findByIdAndDelete(req.params.id);
+
+    if (!deleted) {
+      return res.status(404).json({ success: false, error: "Record not found" });
+    }
 
     res.json({
       success: true,
       message: "Deleted Successfully"
     });
+
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("deleteHeading error:", error.message);
+    res.status(500).json({ success: false, error: error.message });
   }
 };
