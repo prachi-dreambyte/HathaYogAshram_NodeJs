@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
+const upload = require('../middleware/upload');
 const {
   getAllTestimonials,
   getTestimonialById,
   createTestimonial,
   updateTestimonial,
   deleteTestimonial,
-} = require('../controllers/testimonial.controller');
+} = require('../controllers/homepage/TestinomialCardController');
 
 // GET    /api/testimonials
 router.get('/', getAllTestimonials);
@@ -15,10 +16,10 @@ router.get('/', getAllTestimonials);
 router.get('/:id', getTestimonialById);
 
 // POST   /api/testimonials
-router.post('/', createTestimonial);
+router.post('/', upload.single('image'), createTestimonial);
 
 // PUT    /api/testimonials/:id
-router.put('/:id', updateTestimonial);
+router.put('/:id', upload.single('image'), updateTestimonial);
 
 // DELETE /api/testimonials/:id
 router.delete('/:id', deleteTestimonial);

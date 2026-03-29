@@ -46,7 +46,7 @@ app.use("/api/home-retreat-section", require("./routes/HomeRetreatSectionRoute")
 app.use("/api/home-video-section-two", require("./routes/HomeVideoSectionTwoRoute"));
 app.use("/api/why-choose-heading", require("./routes/WhychooseHeadingRoute"));
 app.use("/api/homewhychoosecard", require("./routes/WhychoosecardsRoute"));
-// app.use("/api/testimonials", require('./routes/TestinomialCard'));
+app.use("/api/testimonials", require("./routes/TestinomialCard"));
 // app.use("/api/home-video", require("./routes/HomepageVideoSection"));
 app.use("/api/home-video-section", require('./routes/HomepageVideoSection'));
 app.use("/api/faq", require('./routes/HomeFaqHeadingRoute'));
