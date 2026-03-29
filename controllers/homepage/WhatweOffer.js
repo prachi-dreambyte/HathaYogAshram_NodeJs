@@ -2,6 +2,12 @@ const WhatWeOffer = require("../../models/homepage/WhatweOffer");
 const path = require("path");
 const fs = require("fs");
 
+const deleteImageFile = (filename) => {
+  if (!filename) return;
+  const filePath = path.resolve(__dirname, "../../uploads", filename);
+  if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+};
+
 // ─── GET ALL ──────────────────────────────────────────────────────────────────
 exports.getAll = async (req, res) => {
   try {
@@ -59,6 +65,7 @@ exports.create = async (req, res) => {
     const saved = await newItem.save();
     res.status(201).json({ success: true, data: saved });
   } catch (error) {
+    if (req.file) deleteImageFile(req.file.filename);
     res.status(400).json({ success: false, message: error.message });
   }
 };
@@ -67,11 +74,21 @@ exports.create = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const existing = await WhatWeOffer.findById(req.params.id);
-    if (!existing)
+    if (!existing) {
+      if (req.file) deleteImageFile(req.file.filename);
       return res.status(404).json({ success: false, message: "Item not found" });
+    }
 
-    const { icon, title, text, modalTitle, modalDescription, features, order } =
-      req.body;
+    const {
+      icon,
+      title,
+      text,
+      modalTitle,
+      modalDescription,
+      features,
+      order,
+      removeImage,
+    } = req.body;
 
     // Parse features
     let parsedFeatures = existing.modalContent.features;
@@ -89,12 +106,11 @@ exports.update = async (req, res) => {
     // Handle image replacement
     let imageName = existing.image;
     if (req.file) {
-      // Delete old image if it exists
-      if (existing.image) {
-        const oldPath = path.join(__dirname, "../uploads", existing.image);
-        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
-      }
+      deleteImageFile(existing.image);
       imageName = req.file.filename;
+    } else if (removeImage === "true") {
+      deleteImageFile(existing.image);
+      imageName = null;
     }
 
     const updated = await WhatWeOffer.findByIdAndUpdate(
@@ -116,6 +132,7 @@ exports.update = async (req, res) => {
 
     res.status(200).json({ success: true, data: updated });
   } catch (error) {
+    if (req.file) deleteImageFile(req.file.filename);
     res.status(400).json({ success: false, message: error.message });
   }
 };
@@ -127,11 +144,7 @@ exports.remove = async (req, res) => {
     if (!item)
       return res.status(404).json({ success: false, message: "Item not found" });
 
-    // Delete associated image file
-    if (item.image) {
-      const imgPath = path.join(__dirname, "../uploads", item.image);
-      if (fs.existsSync(imgPath)) fs.unlinkSync(imgPath);
-    }
+    deleteImageFile(item.image);
 
     await WhatWeOffer.findByIdAndDelete(req.params.id);
     res.status(200).json({ success: true, message: "Item deleted successfully" });
