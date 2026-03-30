@@ -31,6 +31,11 @@ const safeJsonParse = (value, fallback = value) => {
   }
 };
 
+const stripDocumentMeta = (doc = {}) => {
+  const { _id, __v, createdAt, updatedAt, ...rest } = doc;
+  return rest;
+};
+
 const normalizeStringArray = (value) => {
   if (!value) return [];
   const parsed = safeJsonParse(value, value);
@@ -211,9 +216,42 @@ const buildPayload = (req) => {
   return body;
 };
 
+const mergePayloadWithExisting = (existingDoc, payload) => {
+  const existing = stripDocumentMeta(
+    existingDoc?.toObject ? existingDoc.toObject() : existingDoc || {}
+  );
+
+  return {
+    ...existing,
+    ...payload,
+    cta: payload.cta !== undefined
+      ? {
+        ...(existing.cta || {}),
+        ...(payload.cta || {}),
+      }
+      : existing.cta,
+  };
+};
+
 exports.createYinYoga = async (req, res) => {
   try {
     const payload = buildPayload(req);
+    const existing = await YinYoga.findOne().sort({ updatedAt: -1, createdAt: -1 });
+
+    if (existing) {
+      const mergedPayload = mergePayloadWithExisting(existing, payload);
+      const doc = await YinYoga.findByIdAndUpdate(existing._id, mergedPayload, {
+        new: true,
+        runValidators: true,
+      });
+
+      return res.status(200).json({
+        success: true,
+        message: "Yin Yoga content updated successfully",
+        data: doc,
+      });
+    }
+
     const doc = await YinYoga.create(payload);
 
     res.status(201).json({
@@ -232,6 +270,7 @@ exports.getYinYoga = async (req, res) => {
 
     res.json({
       success: true,
+      current: docs[0] || null,
       data: docs,
     });
   } catch (error) {
@@ -242,14 +281,17 @@ exports.getYinYoga = async (req, res) => {
 exports.updateYinYoga = async (req, res) => {
   try {
     const payload = buildPayload(req);
-    const updated = await YinYoga.findByIdAndUpdate(req.params.id, payload, {
+    const existing = await YinYoga.findById(req.params.id);
+
+    if (!existing) {
+      return res.status(404).json({ success: false, message: "Yin Yoga content not found" });
+    }
+
+    const mergedPayload = mergePayloadWithExisting(existing, payload);
+    const updated = await YinYoga.findByIdAndUpdate(req.params.id, mergedPayload, {
       new: true,
       runValidators: true,
     });
-
-    if (!updated) {
-      return res.status(404).json({ success: false, message: "Yin Yoga content not found" });
-    }
 
     res.json({
       success: true,
