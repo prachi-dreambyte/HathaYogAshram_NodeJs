@@ -4,6 +4,7 @@ const upload = require('../config/multer'); // your existing multer file
 const {
   getAll,
   getOne,
+  getBySlug,
   create,
   update,
   delete: deleteItem,
@@ -18,6 +19,8 @@ const uploadFields = upload.fields([
 router.route('/')
   .get(getAll)
   .post(uploadFields, create);
+
+router.get('/slug/:slug', getBySlug);
 
 router.route('/:id')
   .get(getOne)
